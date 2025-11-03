@@ -249,7 +249,7 @@ export default function Navbar() {
             ["PLAYERS", "/player"],
             ["SERVICES", "/service"],
             ["ABOUT", "/about"],
-            ["TALENT FORM", "/talentform"],
+            ["TALENT HUNT", "/talentform"],
           ].map(([label, path]) => (
             <Link
               key={label}
