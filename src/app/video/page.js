@@ -17,6 +17,7 @@ export default function VideoPage() {
   }, [formFilled]);
 
   const onEnded = () => {
+    
     setEnded(true);
     dispatch(markVideoWatched());
   };

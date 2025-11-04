@@ -22,7 +22,7 @@ export default function Home() {
     <div className="min-h-screen flex flex-col bg-black text-white overflow-x-hidden">
       {/* ================= HERO SECTION ================= */}
       <section className="relative h-[80vh] sm:h-[90vh] md:h-screen bg-white flex items-center justify-center">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-opacity-50 grayscale"
           style={{ backgroundImage: "url('/images/homeimage.jpg')" }}
         />
@@ -30,7 +30,7 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black via-black/50 to-transparent pointer-events-none" />
         <div className="absolute text-center top-22  px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl sm:text-5xl md:text-8xl font-extrabold uppercase mb-2 tracking-wider">
-            The CricketVerse 
+            The CricketVerse
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
             A premier cricket event bringing together top players and clubs from across the nation.
@@ -47,7 +47,7 @@ export default function Home() {
       {/* ================= ABOUT SECTION ================= */}
       <section className="py-16 sm:py-20 bg-black text-center">
         <h2 className="text-2xl sm:text-3xl font-bold text-red-500  uppercase  tracking-wide">
-         About
+          About
         </h2>
         <h2 className="text-3xl sm:text-4xl font-bold uppercase mb-10 text-white tracking-wide">
           The CricketVerse
@@ -79,29 +79,62 @@ export default function Home() {
       </section>
 
       {/* ================= PARTNER CLUBS ================= */}
-      <section className="py-16 sm:py-20 bg-[#111] text-center">
+      <section className="py-16 sm:py-20 bg-[#111] text-center text-white">
         <h2 className="text-3xl sm:text-4xl font-bold uppercase mb-12 tracking-wide">
-         
-Featured Players
+          Featured Players
         </h2>
+
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 sm:gap-8 max-w-6xl mx-auto px-4 sm:px-6">
-          {["Spartans", "Super Strikers", "Thunder XI", "Lions United", "Northeast Titans"].map(
-            (club, i) => (
-              <div
-                key={i}
-                className="flex flex-col items-center bg-[#1a1a1a] p-4 sm:p-6 rounded-xl hover:bg-[#222] transition"
-              >
-                <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gray-700 rounded-full mb-3"></div>
-                <h3 className="text-base sm:text-lg font-semibold">{club}</h3>
-                <Link
-                  href="#"
-                  className="text-red-500 text-xs sm:text-sm mt-2 hover:underline"
-                >
-                  Learn More
-                </Link>
+          {[
+            {
+              name: "Ritik",
+              img: "/images/player2.png",
+              link: "#",
+            },
+            {
+              name: "Neha",
+              img: "/images/player1.png",
+              link: "#",
+            },
+            {
+              name: "Rohit",
+              img: "/images/player3.png",
+              link: "#",
+            },
+            {
+              name: "Gaurav",
+              img: "/images/player4.png",
+              link: "#",
+            },
+            {
+              name: "Ganesh",
+              img: "/images/player2.png",
+              link: "#",
+            },
+          ].map((club, i) => (
+            <div
+              key={i}
+              className="flex flex-col items-center bg-[#1a1a1a] p-6 sm:p-8 rounded-2xl transition-all duration-300 hover:bg-[#222] hover:shadow-[0_0_20px_rgba(255,0,0,0.3)] hover:-translate-y-1"
+            >
+              <div className="relative w-32 h-32 sm:w-36 sm:h-36 mb-4 rounded-full overflow-hidden shadow-lg">
+                <Image
+                  src={club.img}
+                  alt={club.name}
+                  width={150}
+                  height={150}
+                  className="object-cover w-full h-full rounded-full"
+                />
               </div>
-            )
-          )}
+
+              <h3 className="text-lg sm:text-xl font-semibold">{club.name}</h3>
+              <Link
+                href={club.link}
+                className="text-red-500 text-sm sm:text-base mt-2 hover:underline"
+              >
+                Learn More
+              </Link>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -110,16 +143,53 @@ Featured Players
         <h2 className="text-3xl sm:text-4xl font-bold uppercase mb-12 tracking-wide">
           Our Events
         </h2>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 sm:gap-8 max-w-6xl mx-auto px-4 sm:px-6">
-          {["Beach Bowl", "Holiday Bowl", "Hershey Bowl", "Nashville Bowl"].map((event, i) => (
+          {[
+            {
+              name: " T20 Tournament",
+              img: "/images/t20.png",
+              link: "#",
+            },
+            {
+              name: "One Day Tournamnet",
+              img: "/images/one-day.png",
+              link: "#",
+            },
+            {
+              name: "Test Championship",
+              img: "/images/test.png",
+              link: "#",
+            },
+            {
+              name: "Inter Club Tournament",
+              img: "/images/interclub.png",
+              link: "#",
+            },
+          ].map((event, i) => (
             <div
               key={i}
-              className="bg-[#1a1a1a] rounded-xl p-4 sm:p-6 hover:scale-105 transition shadow-md"
+              className="bg-[#1a1a1a] rounded-xl p-4 sm:p-6 hover:scale-105 transition shadow-md hover:shadow-[0_0_20px_rgba(255,0,0,0.3)]"
             >
-              <div className="w-full h-28 sm:h-32 bg-gray-700 rounded-lg mb-4"></div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-2">{event}</h3>
+              {/* 🏏 Event Image */}
+              <div className="w-full h-40 sm:h-48 rounded-lg overflow-hidden mb-4">
+                <Image
+                  src={event.img}
+                  alt={event.name}
+                  width={400}
+                  height={300}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+
+              {/* 🏆 Event Title */}
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">
+                {event.name}
+              </h3>
+
+              {/* 🔗 Learn More */}
               <Link
-                href="#"
+                href={event.link}
                 className="text-red-500 hover:underline text-xs sm:text-sm"
               >
                 Learn More
@@ -128,6 +198,7 @@ Featured Players
           ))}
         </div>
       </section>
+
 
       {/* ================= UPCOMING EVENTS ================= */}
       <section className="py-16 sm:py-20 bg-[#111] text-center">
@@ -141,7 +212,7 @@ Featured Players
               className="bg-[#1a1a1a] p-4 sm:p-6 rounded-xl hover:bg-[#222] transition"
             >
               <Image
-                src={`https://images.unsplash.com/photo-1594909122848-885d9e6622a2?auto=format&fit=crop&w=800&q=80`}
+                src={`/images/summercamp.png`}
                 alt="event"
                 width={400}
                 height={250}
@@ -202,7 +273,7 @@ Featured Players
       </section>
 
       {/* ================= FOOTER ================= */}
-      
+
     </div>
   );
 }
