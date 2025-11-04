@@ -265,12 +265,18 @@ export default function Navbar() {
           >
             SIGN UP
           </Link>
-             {/* <Link
+          <Link
             href="/login"
             className="bg-red-600 text-white px-4 py-1  hover:bg-red-700 transition"
           >
             LOGIN
-          </Link> */}
+          </Link>
+          <Link
+            href="/payment"
+            className="bg-red-600 text-white px-4 py-1  hover:bg-red-700 transition"
+          >
+            payment
+          </Link>
         </div>
 
         {/* ====== Mobile Menu Button ====== */}
