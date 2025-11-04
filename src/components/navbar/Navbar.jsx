@@ -260,10 +260,16 @@ export default function Navbar() {
             </Link>
           ))}
           <Link
-            href="/login"
+            href="/signup"
             className="bg-red-600 text-white px-4 py-1  hover:bg-red-700 transition"
           >
             SIGN UP
+          </Link>
+             <Link
+            href="/login"
+            className="bg-red-600 text-white px-4 py-1  hover:bg-red-700 transition"
+          >
+            LOGIN
           </Link>
         </div>
 

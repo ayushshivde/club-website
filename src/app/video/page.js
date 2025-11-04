@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { markVideoWatched } from "../../store/PlayerSlice";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { asyncUserVideoWatched } from "../../store/actions/userAction";
 
 export default function VideoPage() {
   const dispatch = useDispatch();
@@ -57,7 +58,8 @@ export default function VideoPage() {
   const onEnded = () => {
     
     setEnded(true);
-    dispatch(markVideoWatched());
+    // Pass the formData.id to the async action
+    dispatch(asyncUserVideoWatched(formData.id));
   };
 
   return (

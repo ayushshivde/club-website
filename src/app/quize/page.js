@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { markQuizCompleted } from "../../store/PlayerSlice";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { asyncUserQuizWatched } from "../../store/actions/userAction";
 
 const questions = [
   {
@@ -78,7 +79,8 @@ export default function QuizPage() {
 
   const handleSubmit = () => {
     setSubmitted(true);
-    dispatch(markQuizCompleted());
+    // Pass the formData.id to the async action
+    dispatch(asyncUserQuizWatched(formData.id));
   };
 
   const score = questions.filter((q, i) => selected[i] === q.ans).length;
