@@ -12,7 +12,7 @@ export default function PaymentForm() {
   const onSubmit = (data) => {
     console.log(data);
     alert("Payment submitted successfully!");
-    router.push("/talentform");
+    router.push("/skillform");
   };
 
   return (

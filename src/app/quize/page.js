@@ -29,15 +29,25 @@ export default function QuizPage() {
   const router = useRouter();
   const [selected, setSelected] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!formFilled) router.push("/");
-    else if (!videoWatched) router.push("/video");
+    // Wait a bit to ensure rehydration is complete
+    const timer = setTimeout(() => {
+      setLoading(false);
+      if (formFilled === false) {
+        router.push("/talenthunt");
+      } else if (formFilled === true && videoWatched === false) {
+        router.push("/video");
+      }
+    }, 100); // Small delay to ensure rehydration
+
+    return () => clearTimeout(timer);
   }, [formFilled, videoWatched]);
 
   // Save quiz completion status to localStorage
   useEffect(() => {
-    if (submitted && formFilled && formData && formData.id) {
+    if (!loading && submitted && formFilled && formData && formData.id) {
       const existingPlayers = JSON.parse(localStorage.getItem("players")) || [];
       
       // Find and update the player with quiz completion status
@@ -54,7 +64,7 @@ export default function QuizPage() {
         localStorage.setItem("players", JSON.stringify(updatedPlayers));
       }
     }
-  }, [submitted, formFilled, formData]);
+  }, [submitted, formFilled, formData, loading]);
 
   // Warn user before leaving the page during quiz
   useEffect(() => {
@@ -84,6 +94,17 @@ export default function QuizPage() {
   };
 
   const score = questions.filter((q, i) => selected[i] === q.ans).length;
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 p-6">
@@ -158,7 +179,7 @@ export default function QuizPage() {
               ></div>
             </div>
             <button
-              onClick={() => router.push("/talentform")}
+              onClick={() => router.push("/skillform")}
               className="bg-green-600 text-white px-8 py-2 rounded-lg font-semibold hover:bg-green-700 transition-all"
             >
               Finish

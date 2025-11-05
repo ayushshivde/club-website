@@ -1,11 +1,14 @@
 "use client";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { saveFormData, restoreFormData, updateFormData } from "../../store/PlayerSlice";
 import { useRouter } from "next/navigation";
-import { nanoid } from "nanoid";
 import { useEffect } from "react";
 import { asyncUserPersonalInfo } from "../../store/actions/userAction";
+import {z} from "zod";
+import {zodResolver} from "@hookform/resolvers/zod";
+import { personalInfoSchema } from "../../components/validation/formvalidation";
+
+
 
 export default function Home() {
   const {
@@ -14,43 +17,21 @@ export default function Home() {
     formState: { errors },
     watch,
     setValue,
-  } = useForm();
+  } = useForm(
+    {
+      resolver: zodResolver(personalInfoSchema),
+    }
+  );
   const dispatch = useDispatch();
   const router = useRouter();
 
-  // Watch all form fields
+
   const formData = watch();
 
-  // Save form data to localStorage whenever it changes
-  useEffect(() => {
-    // Only save if at least one field has a value
-    if (Object.values(formData).some(value => value !== undefined && value !== "")) {
-      localStorage.setItem("tempFormData", JSON.stringify(formData));
-    }
-  }, [formData]);
 
-  // Load saved form data on component mount
-  useEffect(() => {
-    const savedData = localStorage.getItem("tempFormData");
-    if (savedData) {
-      try {
-        const parsedData = JSON.parse(savedData);
-        Object.keys(parsedData).forEach(key => {
-          // Set form values from saved data
-          if (parsedData[key] !== "") {
-            setValue(key, parsedData[key]);
-          }
-        });
-      } catch (e) {
-        console.error("Failed to parse saved form data", e);
-      }
-    }
-  }, [setValue]);
-
-  // Warn user before leaving the page if form has data
   useEffect(() => {
     const handleBeforeUnload = (e) => {
-      // Check if any form field has a value
+      
       const hasData = Object.values(formData).some(value => value !== undefined && value !== "");
       if (hasData) {
         e.preventDefault();
@@ -67,55 +48,56 @@ export default function Home() {
 
   const onSubmit = async (data) => {
     // Get existing players from localStorage (fallback)
-    const existingPlayers = JSON.parse(localStorage.getItem("players")) || [];
+    // const existingPlayers = JSON.parse(localStorage.getItem("players")) || [];
 
     // Check if we have temporary form data with an existing ID
-    let playerId = data.id;
-    const tempFormData = localStorage.getItem("tempFormData");
-    
-    // If no ID in current data but we have temp data with an ID, use that ID
-    if (!playerId && tempFormData) {
-      try {
-        const parsedTempData = JSON.parse(tempFormData);
-        if (parsedTempData.id) {
-          playerId = parsedTempData.id;
-          data.id = playerId;
-        }
-      } catch (e) {
-        console.error("Failed to parse temp form data", e);
-      }
-    }
-    
-    // If still no ID, generate one
-    if (!playerId) {
-      playerId = nanoid();
-      data.id = playerId;
-    }
+    // let playerId = data.id;
+    // const tempFormData = localStorage.getItem("tempFormData");
 
-    // Check if player with this ID already exists in localStorage
-    const playerExists = existingPlayers.some(player => player.id === playerId);
+    // // If no ID in current data but we have temp data with an ID, use that ID
+    // if (!playerId && tempFormData) {
+    //   try {
+    //     const parsedTempData = JSON.parse(tempFormData);
+    //     if (parsedTempData.id) {
+    //       playerId = parsedTempData.id;
+    //       data.id = playerId;
+    //     }
+    //   } catch (e) {
+    //     console.error("Failed to parse temp form data", e);
+    //   }
+    // }
 
-    // Update existing player or add new one in localStorage (fallback)
-    let updatedPlayers = [];
-    if (playerExists) {
-      // Update existing player data
-      updatedPlayers = existingPlayers.map(player => 
-        player.id === playerId ? {...data} : player
-      );
-    } else {
-      // Add new player
-      updatedPlayers = [...existingPlayers, data];
-    }
+    // // If still no ID, generate one
+    // if (!playerId) {
+    //   playerId = nanoid();
+    //   data.id = playerId;
+    // }
 
-    // Save back to localStorage (fallback)
-    localStorage.setItem("players", JSON.stringify(updatedPlayers));
-    
-    // Clear temporary form data
-    localStorage.removeItem("tempFormData");
+    // // Check if player with this ID already exists in localStorage
+    // const playerExists = existingPlayers.some(player => player.id === playerId);
+
+    // // Update existing player or add new one in localStorage (fallback)
+    // let updatedPlayers = [];
+    // if (playerExists) {
+    //   // Update existing player data
+    //   updatedPlayers = existingPlayers.map(player => 
+    //     player.id === playerId ? {...data} : player
+    //   );
+    // } else {
+    //   // Add new player
+    //   updatedPlayers = [...existingPlayers, data];
+    // }
+
+    // // Save back to localStorage (fallback)
+    // localStorage.setItem("players", JSON.stringify(updatedPlayers));
+
+    // // Clear temporary form data
+    // localStorage.removeItem("tempFormData");
 
     // Dispatch to redux store and save to database
     // The async action will handle duplicate prevention
     await dispatch(asyncUserPersonalInfo(data));
+
 
     // Redirect
     router.push("/video");

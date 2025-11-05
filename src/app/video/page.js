@@ -10,17 +10,26 @@ export default function VideoPage() {
   const router = useRouter();
   const { formFilled, formData } = useSelector((state) => state.playerReducer);
   const [ended, setEnded] = useState(false);
+  const [loading, setLoading] = useState(true);
   const videoRef = useRef(null);
 
   // Redirect if user hasn't filled the form
   useEffect(() => {
-    if (!formFilled) router.push("/");
+    // Wait a bit to ensure rehydration is complete
+    const timer = setTimeout(() => {
+      setLoading(false);
+      if (formFilled === false) {
+        router.push("/talenthunt");
+      }
+    }, 100); // Small delay to ensure rehydration
+
+    return () => clearTimeout(timer);
   }, [formFilled]);
 
   // Save form data to localStorage when component mounts
   // This ensures that even if user refreshes the page during video, form data is preserved
   useEffect(() => {
-    if (formFilled && formData && formData.id) {
+    if (!loading && formFilled && formData && formData.id) {
       const existingPlayers = JSON.parse(localStorage.getItem("players")) || [];
       
       // Find and update the player with video watched status
@@ -37,7 +46,7 @@ export default function VideoPage() {
         localStorage.setItem("players", JSON.stringify(updatedPlayers));
       }
     }
-  }, [formFilled, formData]);
+  }, [formFilled, formData, loading]);
 
   // Warn user before leaving the page during video watching
   useEffect(() => {
@@ -56,11 +65,21 @@ export default function VideoPage() {
   }, [ended]);
 
   const onEnded = () => {
-    
     setEnded(true);
     // Pass the formData.id to the async action
     dispatch(asyncUserVideoWatched(formData.id));
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-blue-50 p-6">

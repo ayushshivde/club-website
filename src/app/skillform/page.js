@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 import {asyncTalentForm} from "../../store/actions/userAction"
+import { useEffect } from "react";
 // import { saveFormData } from "../../store/PlayerSlice";
 
 const TalentFormPage = () => {
@@ -13,9 +14,11 @@ const TalentFormPage = () => {
   const { register, handleSubmit, reset, watch } = useForm();
   const [step, setStep] = useState(1);
   const router = useRouter();
-  const {  id} = useSelector((s) => s.playerReducer);
+  const { formFilled,  id} = useSelector((s) => s.playerReducer);
 
-  
+    useEffect(() => {
+      if (!formFilled) router.push("/talenthunt");
+    }, [formFilled]);
 
   const Submithandler = (data) => {
     console.log(data);
@@ -25,7 +28,7 @@ const TalentFormPage = () => {
     localStorage.setItem("players", JSON.stringify([...existingPlayers, newPlayer]));
     alert("✅ Form Submitted Successfully!");
     reset();
-    router.push("/player");
+    router.push("/");
   };
 
   const cricketFields = watch(["role", "battingStyle", "bowlingStyle", "level"]);
