@@ -1,14 +1,14 @@
-
-
-
-
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import RehydrationTest from "../components/RehydrationTest";
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-black text-white overflow-x-hidden">
+      {/* Rehydration Test Component */}
+      <RehydrationTest />
+      
       {/* ================= HERO SECTION ================= */}
       <section className="relative h-[80vh] sm:h-[90vh] md:h-screen bg-white flex items-center justify-center">
         <div
@@ -160,7 +160,7 @@ export default function Home() {
               key={i}
               className="bg-[#1a1a1a] rounded-xl p-4 sm:p-6 hover:scale-105 transition shadow-md hover:shadow-[0_0_20px_rgba(255,0,0,0.3)]"
             >
-              {/* 🏏 Event Image */}
+              {/* Event Image */}
               <div className="w-full h-40 sm:h-48 rounded-lg overflow-hidden mb-4">
                 <Image
                   src={event.img}
@@ -171,12 +171,12 @@ export default function Home() {
                 />
               </div>
 
-              {/* 🏆 Event Title */}
+              {/* Event Title */}
               <h3 className="text-lg sm:text-xl font-semibold mb-2">
                 {event.name}
               </h3>
 
-              {/* 🔗 Learn More */}
+              {/* Learn More */}
               <Link
                 href={event.link}
                 className="text-red-500 hover:underline text-xs sm:text-sm"
@@ -266,9 +266,3 @@ export default function Home() {
     </div>
   );
 }
-
-
-
-
-
-

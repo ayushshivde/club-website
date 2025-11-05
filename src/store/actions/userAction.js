@@ -1,5 +1,69 @@
+import { nanoid } from "@reduxjs/toolkit";
 import axios from "../../utils/axiosConfig"
-import { saveFormData, markVideoWatched, markQuizCompleted ,saveUserID ,talentForm} from "../PlayerSlice";
+import { saveFormData, markVideoWatched, markQuizCompleted ,saveUserID ,talentForm, rehydrateState} from "../PlayerSlice";
+
+// New function to rehydrate Redux store from backend on page refresh
+export const rehydrateStoreFromBackend = () => async (dispatch, getState) => {
+  try {
+    // Check if we have a user ID stored in localStorage
+    const storedUserId = localStorage.getItem('userId');
+    const storedFormId = localStorage.getItem('formId');
+    
+    if (storedUserId) {
+      // Fetch user data by user ID
+      const res = await axios.get(`/users/${storedUserId}`);
+      
+      if (res.status >= 200 && res.status < 300) {
+        const userData = res.data;
+        
+        // Dispatch comprehensive rehydration action
+        dispatch(rehydrateState({
+          id: userData.id,
+          formData: userData.formData,
+          formFilled: userData.formFilled,
+          videoWatched: userData.videoWatched,
+          quizCompleted: userData.quizCompleted,
+          talentForm: userData.talentForm
+        }));
+        
+        console.log("Redux store successfully rehydrated from backend");
+        return { success: true, data: userData, rehydrated: true };
+      }
+    } else if (storedFormId) {
+      // If we don't have user ID, try to find user by form ID
+      const res = await axios.get(`/users`);
+      
+      if (res.status >= 200 && res.status < 300) {
+        const users = res.data;
+        const user = users.find(u => u.formData.id === storedFormId);
+        
+        if (user) {
+          // Dispatch comprehensive rehydration action
+          dispatch(rehydrateState({
+            id: user.id,
+            formData: user.formData,
+            formFilled: user.formFilled,
+            videoWatched: user.videoWatched,
+            quizCompleted: user.quizCompleted,
+            talentForm: user.talentForm
+          }));
+          
+          // Save the main user ID for future use
+          localStorage.setItem('userId', user.id);
+          
+          console.log("Redux store successfully rehydrated from backend");
+          return { success: true, data: user, rehydrated: true };
+        }
+      }
+    }
+    
+    console.log("No stored user identifiers found for rehydration");
+    return { success: false, message: "No stored user identifiers found", rehydrated: true };
+  } catch (error) {
+    console.error("Error rehydrating store from backend:", error);
+    return { success: false, error: error.message, rehydrated: true };
+  }
+};
 
 export const asyncUserPersonalInfo = (user) => async (dispatch, getState) => {
   try {
@@ -28,10 +92,22 @@ export const asyncUserPersonalInfo = (user) => async (dispatch, getState) => {
       
       if (updateRes.status >= 200 && updateRes.status < 300) {
         console.log("User updated successfully:", updateRes.data);
-        // Save only the formData part to Redux
-        console.log("update data -> " ,  updateRes)
-        dispatch(saveFormData(updateRes.data.formData));
-        dispatch(saveUserID(updateRes.data.id));
+        // Use comprehensive rehydration
+        dispatch(rehydrateState({
+          id: updateRes.data.id,
+          formData: updateRes.data.formData,
+          formFilled: updateRes.data.formFilled,
+          videoWatched: updateRes.data.videoWatched,
+          quizCompleted: updateRes.data.quizCompleted,
+          talentForm: updateRes.data.talentForm
+        }));
+        
+        // Save user ID to localStorage for rehydration
+        localStorage.setItem('userId', updateRes.data.id);
+        if (updateRes.data.formData?.id) {
+          localStorage.setItem('formId', updateRes.data.formData.id);
+        }
+        
         return updateRes.data;
       }
     } else {
@@ -39,20 +115,34 @@ export const asyncUserPersonalInfo = (user) => async (dispatch, getState) => {
       // The user object is the actual form data
       // We need to wrap it in the proper structure for the database
       const newUser = {
-        id: user.id || Date.now().toString(), // Generate ID if not present
+        id: nanoid(), // Generate ID if not present
         formData: user, 
         formFilled: true,
         videoWatched: false,
         quizCompleted: false,
-talentForm : {}
+        talentForm : {}
       };
 
       const res = await axios.post("/users", newUser);
 
       if (res.status >= 200 && res.status < 300) {
         console.log("User successfully added:", res.data);
-        // Save only the formData part to Redux (not the entire user object)
-        dispatch(saveFormData(res.data.formData)); 
+        // Use comprehensive rehydration
+        dispatch(rehydrateState({
+          id: res.data.id,
+          formData: res.data.formData,
+          formFilled: res.data.formFilled,
+          videoWatched: res.data.videoWatched,
+          quizCompleted: res.data.quizCompleted,
+          talentForm: res.data.talentForm
+        }));
+        
+        // Save user ID to localStorage for rehydration
+        localStorage.setItem('userId', res.data.id);
+        if (res.data.formData?.id) {
+          localStorage.setItem('formId', res.data.formData.id);
+        }
+        
         return res.data;
       } else {
         console.error("Unexpected response:", res);
@@ -104,6 +194,13 @@ export const asyncUserVideoWatched = (userId) => async (dispatch, getState) => {
       console.log("Video watched updated successfully:", res.data);
       // Update Redux state
       dispatch(markVideoWatched());
+      
+      // Also update the full state to keep it consistent
+      const currentState = getState().playerReducer;
+      dispatch(rehydrateState({
+        ...currentState,
+        videoWatched: true
+      }));
     } else {
       console.error("Unexpected response while updating:", res);
     }
@@ -156,6 +253,13 @@ export const asyncUserQuizWatched = (userId) => async (dispatch, getState) => {
       console.log("Quiz completed updated successfully:", res.data);
       // Update Redux state
       dispatch(markQuizCompleted());
+      
+      // Also update the full state to keep it consistent
+      const currentState = getState().playerReducer;
+      dispatch(rehydrateState({
+        ...currentState,
+        quizCompleted: true
+      }));
     } else {
       console.error("Unexpected response while updating quizCompleted:", res);
     }
@@ -167,21 +271,25 @@ export const asyncUserQuizWatched = (userId) => async (dispatch, getState) => {
   }
 };
 
-
-
-
 export const asyncTalentForm = (userId, talentData) => async (dispatch, getState) => {
   try {
     // PATCH only the 'talentForm' field of this user
     const res = await axios.patch(`/users/${userId}`, {
       talentForm: talentData
     });
-    dispatch(talentForm(talentData))
+    
+    // Update Redux state
+    dispatch(talentForm(talentData));
+    
+    // Also update the full state to keep it consistent
+    const currentState = getState().playerReducer;
+    dispatch(rehydrateState({
+      ...currentState,
+      talentForm: talentData
+    }));
+    
     if (res.status >= 200 && res.status < 300) {
       console.log("Talent form added successfully:", res.data);
-
-      // ✅ Optional: update Redux store if needed
-      // dispatch(saveTalentForm(res.data));
     } else {
       console.error("Unexpected response:", res);
     }
@@ -190,38 +298,3 @@ export const asyncTalentForm = (userId, talentData) => async (dispatch, getState
     console.error("Error updating talentForm:", error);
   }
 };
-
-
-
-
-// export const asyncUserLogin = (data) => async (dispatch) => {
-//   try {
-//     // Fetch user by email from db.json
-//     const res = await axios.get(`/users?formData.email=${data.email}`);
-//     const users = res.data;
-
-//     if (users.length > 0) {
-//       // Match username & email
-//       const user = users.find(
-//         (u) =>
-//           u.formData.name === data.username &&
-//           u.formData.email === data.email
-//       );
-
-//       if (user) {
-//         console.log("✅ Login successful:", user);
-//         // Save only the formData part to Redux (not the entire user object)
-//         dispatch(saveFormData(user.formData));
-//         return { success: true, user: user.formData };
-//       } else {
-//         return { success: false, message: "Invalid username or email." };
-//       }
-//     } else {
-//       return { success: false, message: "User not found. Please sign up first." };
-//     }
-//   } catch (error) {
-//     console.error("❌ Login error:", error);
-//     return { success: false, message: "Something went wrong. Please try again." };
-//   }
-// };
-

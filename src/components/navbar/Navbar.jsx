@@ -249,7 +249,7 @@ export default function Navbar() {
             ["PLAYERS", "/player"],
             ["SERVICES", "/service"],
             ["ABOUT", "/about"],
-            ["TALENT HUNT", "/talentform"],
+            // ["TALENT HUNT", "/talentform"],
           ].map(([label, path]) => (
             <Link
               key={label}
@@ -259,24 +259,27 @@ export default function Navbar() {
               {label}
             </Link>
           ))}
+
+
+          
           <Link
-            href="/signup"
+            href="/talenthunt"
             className="bg-red-600 text-white px-4 py-1  hover:bg-red-700 transition"
           >
-            SIGN UP
+            TALENT HUNT
           </Link>
-          <Link
+          {/* <Link
             href="/login"
             className="bg-red-600 text-white px-4 py-1  hover:bg-red-700 transition"
           >
             LOGIN
-          </Link>
-          <Link
+          </Link> */}
+          {/* <Link
             href="/payment"
             className="bg-red-600 text-white px-4 py-1  hover:bg-red-700 transition"
           >
             payment
-          </Link>
+          </Link> */}
         </div>
 
         {/* ====== Mobile Menu Button ====== */}

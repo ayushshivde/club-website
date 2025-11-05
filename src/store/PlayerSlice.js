@@ -47,10 +47,20 @@ const playerSlice = createSlice({
     },
     talentForm: (state, action) => {
       state.talentForm = action.payload;
+    },
+    // Comprehensive rehydration action
+    rehydrateState: (state, action) => {
+      const { id, formData, formFilled, videoWatched, quizCompleted, talentForm } = action.payload;
+      state.id = id || state.id;
+      state.formData = formData || state.formData;
+      state.formFilled = formFilled !== undefined ? formFilled : state.formFilled;
+      state.videoWatched = videoWatched !== undefined ? videoWatched : state.videoWatched;
+      state.quizCompleted = quizCompleted !== undefined ? quizCompleted : state.quizCompleted;
+      state.talentForm = talentForm || state.talentForm;
     }
   },
 });
 
-export const { saveFormData, markVideoWatched, markQuizCompleted, resetAll, restoreFormData, updateFormData ,saveUserID, talentForm} =
+export const { saveFormData, markVideoWatched, markQuizCompleted, resetAll, restoreFormData, updateFormData ,saveUserID, talentForm, rehydrateState} =
   playerSlice.actions;
 export default playerSlice.reducer;
