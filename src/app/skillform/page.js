@@ -77,13 +77,12 @@ const TalentFormPage = () => {
         {/* Progress Bar */}
         <div className="w-full h-2 bg-gray-200 rounded-full mb-8">
           <div
-            className={`h-full rounded-full transition-all duration-500 ${
-              step === 1
+            className={`h-full rounded-full transition-all duration-500 ${step === 1
                 ? "w-1/3 bg-blue-600"
                 : step === 2
-                ? "w-2/3 bg-blue-600"
-                : "w-full bg-blue-600"
-            }`}
+                  ? "w-2/3 bg-blue-600"
+                  : "w-full bg-blue-600"
+              }`}
           ></div>
         </div>
 
@@ -117,9 +116,8 @@ const TalentFormPage = () => {
                 {...register("battingStyle")}
                 defaultValue=""
                 disabled={watch("role") === "Wicket Keeper" ? false : false} // ✅ always enabled for all except (no disable case here)
-                className={`input border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200 w-full ${
-                  watch("role") === "Wicket Keeper" ? "" : ""
-                }`}
+                className={`input border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200 w-full ${watch("role") === "Wicket Keeper" ? "" : ""
+                  }`}
               >
                 <option value="" disabled>
                   Select your batting style
@@ -138,11 +136,10 @@ const TalentFormPage = () => {
                 {...register("bowlingStyle")}
                 defaultValue=""
                 disabled={watch("role") === "Wicket Keeper"} // ❌ disable for wicket keeper
-                className={`input border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200 w-full ${
-                  watch("role") === "Wicket Keeper"
+                className={`input border border-gray-300 rounded-lg p-3 focus:ring focus:ring-blue-200 w-full ${watch("role") === "Wicket Keeper"
                     ? "bg-gray-100 cursor-not-allowed"
                     : ""
-                }`}
+                  }`}
               >
                 <option value="" disabled>
                   Select your bowling style
@@ -208,7 +205,7 @@ const TalentFormPage = () => {
 
             <div className="flex justify-end pt-4">
 
-              
+
               <button
                 type="button"
                 onClick={async () => {
@@ -364,10 +361,10 @@ const TalentFormPage = () => {
               </span>
             </div>
             {errors.consent && (
-  <p className="text-red-500 text-xs mt-1">
-    {errors.consent.message}
-  </p>
-)}
+              <p className="text-red-500 text-xs mt-1">
+                {errors.consent.message}
+              </p>
+            )}
 
             <div className="flex justify-between pt-4">
               <button

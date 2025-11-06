@@ -163,6 +163,7 @@ export const skillInfoSchema = z.object({
 
 
 
+
   /* ✅ Step 3: Media & Verification (optional) */
   videoLink: z
     .string()
