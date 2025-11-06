@@ -8,9 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { asyncTalentForm } from "../../store/actions/userAction";
 import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { skillInfoSchema } from "../../components/validation/formvalidation";
-
-// import { saveFormData } from "../../store/PlayerSlice";
+import {skillInfoValidator} from "../../components/validation/skillInfoValidator"
 
 const TalentFormPage = () => {
   const dispatch = useDispatch();
@@ -22,7 +20,7 @@ const TalentFormPage = () => {
     watch,
     trigger,
   } = useForm({
-    resolver: zodResolver(skillInfoSchema),
+    resolver: zodResolver(skillInfoValidator),
     mode: "onChange",
   });
   const [step, setStep] = useState(1);

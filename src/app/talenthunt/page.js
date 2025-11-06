@@ -4,9 +4,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { asyncUserPersonalInfo } from "../../store/actions/userAction";
-import { z } from "zod";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import { personalInfoSchema } from "../../components/validation/formvalidation";
+
+import {personalInfoValidator} from "../../components/validation/personalInfoValidator"
 import { State, City } from "country-state-city";
 
 export default function Home() {
@@ -25,7 +26,7 @@ export default function Home() {
     reset,
   } = useForm(
     {
-      resolver: zodResolver(personalInfoSchema),
+      resolver: zodResolver(personalInfoValidator),
       defaultValues: formData || {},
     }
   );
@@ -113,6 +114,7 @@ export default function Home() {
             <label className="block mb-1 font-medium text-gray-700">Full Name</label>
             <input
               {...register("name")}
+              type="text"
               placeholder="Enter your full name"
               className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
             />
@@ -124,7 +126,7 @@ export default function Home() {
             <label className="block mb-1 font-medium text-gray-700">Email</label>
             <input
               {...register("email")}
-              type="email"
+              // type="email"
               placeholder="Enter your email"
               className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
             />
@@ -136,7 +138,7 @@ export default function Home() {
             <label className="block mb-1 font-medium text-gray-700">Phone Number</label>
             <input
               {...register("phone")}
-              type="tel"
+              type="number"
               placeholder="Enter your phone number"
               className="w-full p-3 border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none"
             />
