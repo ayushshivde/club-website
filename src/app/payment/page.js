@@ -20,7 +20,7 @@ export default function PaymentForm() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 mt-30 p-4">
       <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 transition-all duration-300 hover:shadow-2xl">
-        {/* Heading */}
+        
         <div className="text-center mb-6">
           <h2 className="text-2xl sm:text-3xl font-semibold text-gray-800">
             Scan & Pay

@@ -3,18 +3,20 @@ import { useSelector, useDispatch } from "react-redux";
 import { markVideoWatched } from "../../store/PlayerSlice";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { asyncUserVideoWatched } from "../../store/actions/userAction";
+import { asyncUserVideoWatched ,asyncRenderQuiz} from "../../store/actions/userAction";
 import { motion } from "framer-motion";
+import { Volume2, VolumeX } from "lucide-react";
 
 export default function VideoPage() {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { formFilled, formData, id } = useSelector((state) => state.playerReducer);
+  const { formFilled, formData, id, videoWatched } = useSelector((state) => state.playerReducer);
   const [ended, setEnded] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef(null);
 
-
+console.log("Form Filled Status:", formFilled);
   useEffect(() => {
     // Wait a bit to ensure rehydration is complete
     const timer = setTimeout(() => {
@@ -27,26 +29,20 @@ export default function VideoPage() {
     return () => clearTimeout(timer);
   }, [formFilled]);
 
-  
-  useEffect(() => {
-    if (!loading && formFilled && formData && formData.id) {
-      const existingPlayers = JSON.parse(localStorage.getItem("players")) || [];
-
-      // Find and update the player with video watched status
-      const playerIndex = existingPlayers.findIndex(player => player.id === formData.id);
-
-      if (playerIndex !== -1) {
-        const updatedPlayers = [...existingPlayers];
-        // Completely replace player data with updated data
-        updatedPlayers[playerIndex] = {
-          ...formData,
-          videoWatched: true
-        };
-
-        localStorage.setItem("players", JSON.stringify(updatedPlayers));
-      }
-    }
-  }, [formFilled, formData, loading]);
+  // useEffect(() => {
+  //     const timer = setTimeout(() => {
+  //         //     setLoading(false);
+  //       if (formFilled === false) {
+  //         router.push("/talenthunt");
+  //       } else if (formFilled === true && videoWatched === false) {
+  //         router.push("/video");
+  //       } else if (formFilled === true && videoWatched === true) {
+  //         router.push("/quiz");
+  //       }
+  //     }, 100);
+  //     return () => clearTimeout(timer);
+  //   }, [formFilled, videoWatched, router]);
+ 
 
  
   useEffect(() => {
@@ -71,6 +67,13 @@ export default function VideoPage() {
 
   };
 
+  const toggleMute = () => {
+    setIsMuted(!isMuted);
+    if (videoRef.current) {
+      videoRef.current.muted = !isMuted;
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -81,6 +84,12 @@ export default function VideoPage() {
       </div>
     );
   }
+
+const onSubmit = ()=>{
+  router.push("/quiz");
+}
+
+
 
   return (
     <motion.div 
@@ -116,7 +125,7 @@ export default function VideoPage() {
           Watch the full video carefully to unlock your quiz. Stay focused till the end
         </motion.p>
 
-        {/* Video Section — untouched */}
+        {/* Video Section */}
         <motion.div 
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -127,16 +136,33 @@ export default function VideoPage() {
             ref={videoRef}
             src="/video/video.mp4"
             autoPlay
+            muted
+            playsInline
             controls={false}
             onEnded={onEnded}
             className="w-full h-auto rounded-2xl object-cover"
           />
+          
+          {/* Custom Mute/Unmute Button */}
+          <motion.button
+            onClick={toggleMute}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            className="absolute top-4 right-4 bg-black bg-opacity-60 hover:bg-opacity-80 text-white p-1 rounded-full shadow-lg transition-all duration-200"
+            aria-label={isMuted ? "Unmute" : "Mute"}
+          >
+            {isMuted ? (
+              <VolumeX size={20} />
+            ) : (
+              <Volume2 size={20} />
+            )}
+          </motion.button>
         </motion.div>
 
         {/* Action Button */}
         <motion.button
           disabled={!ended}
-          onClick={() => router.push("/quiz")}
+          onClick={onSubmit}
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.4, delay: 0.5 }}
